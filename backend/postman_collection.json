@@ -1,0 +1,238 @@
+{
+  "info": {
+    "name": "Healthcare Appointment System API",
+    "_postman_id": "89ab12cd-34ef-5678-90ab-cdef12345678",
+    "description": "Comprehensive REST API Collection for Cross-Platform Healthcare and Clinic Appointment System.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Register Patient",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Rahul Verma\",\n  \"email\": \"rahul.verma@example.com\",\n  \"phone\": \"+91 9123456780\",\n  \"password\": \"Patient@123\",\n  \"role\": \"PATIENT\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] }
+          }
+        },
+        {
+          "name": "Register Doctor",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Dr. Rajesh Sharma\",\n  \"email\": \"dr.sharma@healthcare.com\",\n  \"phone\": \"+91 9876543210\",\n  \"password\": \"Doctor@123\",\n  \"role\": \"DOCTOR\",\n  \"specialty\": \"Cardiology\",\n  \"experience\": 14,\n  \"consultationFee\": 800,\n  \"description\": \"Senior Cardiologist\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"rahul.verma@example.com\",\n  \"password\": \"Patient@123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "Get Current User (Me)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth", "me"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Doctors Discovery",
+      "item": [
+        {
+          "name": "Search Doctors with Filters",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/doctors?specialty=Cardiology&location=Hyderabad&search=Sharma",
+              "host": ["{{baseUrl}}"],
+              "path": ["doctors"],
+              "query": [
+                { "key": "specialty", "value": "Cardiology" },
+                { "key": "location", "value": "Hyderabad" },
+                { "key": "search", "value": "Sharma" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Doctor by ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/doctors/:id", "host": ["{{baseUrl}}"], "path": ["doctors", ":id"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Clinics",
+      "item": [
+        {
+          "name": "Get Clinics List",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/clinics?location=Hyderabad", "host": ["{{baseUrl}}"], "path": ["clinics"] }
+          }
+        },
+        {
+          "name": "Get Clinic by ID (with Doctors)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/clinics/:id", "host": ["{{baseUrl}}"], "path": ["clinics", ":id"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Availability",
+      "item": [
+        {
+          "name": "Create Availability & Slots (Doctor)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"date\": \"2026-09-20\",\n  \"startTime\": \"09:00\",\n  \"endTime\": \"13:00\",\n  \"slotDuration\": 30\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/availability", "host": ["{{baseUrl}}"], "path": ["availability"] }
+          }
+        },
+        {
+          "name": "Get Doctor Availability Slots",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/availability/doctor/:doctorId?date=2026-09-20", "host": ["{{baseUrl}}"], "path": ["availability", "doctor", ":doctorId"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Appointments",
+      "item": [
+        {
+          "name": "Book Appointment (Patient)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"doctorId\": \"DOCTOR_OBJECT_ID\",\n  \"clinicId\": \"CLINIC_OBJECT_ID\",\n  \"date\": \"2026-09-20\",\n  \"startTime\": \"09:30\",\n  \"endTime\": \"10:00\",\n  \"reason\": \"Routine Heart Evaluation\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/appointments", "host": ["{{baseUrl}}"], "path": ["appointments"] }
+          }
+        },
+        {
+          "name": "Get User Appointments",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/appointments", "host": ["{{baseUrl}}"], "path": ["appointments"] }
+          }
+        },
+        {
+          "name": "Reschedule Appointment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"newDate\": \"2026-09-20\",\n  \"newStartTime\": \"11:00\",\n  \"newEndTime\": \"11:30\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/appointments/:id/reschedule", "host": ["{{baseUrl}}"], "path": ["appointments", ":id", "reschedule"] }
+          }
+        },
+        {
+          "name": "Cancel Appointment",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/appointments/:id/cancel", "host": ["{{baseUrl}}"], "path": ["appointments", ":id", "cancel"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Notifications",
+      "item": [
+        {
+          "name": "Get Notifications",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/notifications", "host": ["{{baseUrl}}"], "path": ["notifications"] }
+          }
+        },
+        {
+          "name": "Mark All as Read",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/notifications/read-all", "host": ["{{baseUrl}}"], "path": ["notifications", "read-all"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Admin APIs",
+      "item": [
+        {
+          "name": "Get Platform Statistics",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/admin/stats", "host": ["{{baseUrl}}"], "path": ["admin", "stats"] }
+          }
+        },
+        {
+          "name": "Get User Directory",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/admin/users", "host": ["{{baseUrl}}"], "path": ["admin", "users"] }
+          }
+        }
+      ]
+    }
+  ]
+}
